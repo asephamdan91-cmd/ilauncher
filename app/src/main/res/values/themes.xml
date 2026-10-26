@@ -1,0 +1,6 @@
+<resources>
+    <style name="Theme.IosLauncher" parent="@android:style/Theme.Material.Wallpaper.NoTitleBar">
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+</resources>
