@@ -1,6 +1,7 @@
 package com.example.ioslauncher
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -138,7 +139,7 @@ private fun FolderApp(app: AppInfo, onLaunch: (AppInfo, Rect?) -> Unit, onEject:
         IconLabel(app.label, Modifier.padding(top = 5.dp))
     }
 }
-
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun FolderOverlay(
     folder: FolderItem?,
