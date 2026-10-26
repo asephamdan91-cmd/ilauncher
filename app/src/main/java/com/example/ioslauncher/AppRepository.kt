@@ -12,7 +12,9 @@ data class AppInfo(
     val packageName: String,
     val component: ComponentName,
     val icon: ImageBitmap,
-)
+) {
+    val key: String get() = component.flattenToString()
+}
 
 data class HomeData(val grid: List<AppInfo>, val dock: List<AppInfo>)
 
@@ -26,11 +28,12 @@ object AppRepository {
             .filter { it.activityInfo.packageName != ctx.packageName }
             .map { ri ->
                 val pkg = ri.activityInfo.packageName
+                val label = ri.loadLabel(pm).toString()
                 AppInfo(
-                    label = ri.loadLabel(pm).toString(),
+                    label = label,
                     packageName = pkg,
                     component = ComponentName(pkg, ri.activityInfo.name),
-                    icon = IconRenderer.render(ri.loadIcon(pm)),
+                    icon = CustomIcons.find(ctx, pkg, label) ?: IconRenderer.render(ri.loadIcon(pm)),
                 )
             }
             .sortedBy { it.label.lowercase() }
