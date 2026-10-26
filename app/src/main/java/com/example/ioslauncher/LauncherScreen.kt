@@ -197,7 +197,7 @@ fun LauncherScreen(
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier.fillMaxSize(),
-                    beyondViewportPageCount = if (dragKey != null) 8 else 0,
+                    beyondBoundsPageCount = if (dragKey != null) 8 else 0,
                 ) { p ->
                     val pageItems = pages.getOrElse(p) { emptyList() }
                     Box(
