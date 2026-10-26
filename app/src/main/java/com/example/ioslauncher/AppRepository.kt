@@ -20,6 +20,13 @@ data class HomeData(val grid: List<AppInfo>, val dock: List<AppInfo>)
 
 object AppRepository {
 
+    /** Cache ikon: key = komponen + waktu update paket, jadi ikon tidak dirender ulang tiap onResume. */
+    private val iconCache = HashMap<String, ImageBitmap>()
+
+    private fun updateTime(pm: PackageManager, pkg: String): Long =
+        try { pm.getPackageInfo(pkg, 0).lastUpdateTime } catch (e: Exception) { 0L }
+
+    @Synchronized
     fun load(ctx: Context): HomeData {
         val pm = ctx.packageManager
         val main = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
@@ -29,12 +36,12 @@ object AppRepository {
             .map { ri ->
                 val pkg = ri.activityInfo.packageName
                 val label = ri.loadLabel(pm).toString()
-                AppInfo(
-                    label = label,
-                    packageName = pkg,
-                    component = ComponentName(pkg, ri.activityInfo.name),
-                    icon = CustomIcons.find(ctx, pkg, label) ?: IconRenderer.render(ri.loadIcon(pm)),
-                )
+                val component = ComponentName(pkg, ri.activityInfo.name)
+                val cacheKey = component.flattenToString() + "@" + updateTime(pm, pkg) + "|" + label
+                val icon = iconCache.getOrPut(cacheKey) {
+                    CustomIcons.find(ctx, pkg, label) ?: IconRenderer.render(ri.loadIcon(pm))
+                }
+                AppInfo(label = label, packageName = pkg, component = component, icon = icon)
             }
             .sortedBy { it.label.lowercase() }
 
@@ -45,6 +52,10 @@ object AppRepository {
             pkgFor(pm, Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_BROWSER)),
             pkgFor(pm, Intent(MediaStore.ACTION_IMAGE_CAPTURE)),
         ).distinct()
+
+        // Buang cache untuk app yang sudah tidak terpasang
+        val liveKeys = all.map { it.key }.toSet()
+        iconCache.keys.removeAll { k -> k.substringBefore('@') !in liveKeys }
 
         val dock = dockPackages.mapNotNull { p -> all.firstOrNull { it.packageName == p } }
         val grid = all.filter { it !in dock }

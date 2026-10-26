@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -90,6 +91,7 @@ fun LauncherScreen(
     var openFolderId by remember { mutableStateOf<String?>(null) }
     var folderVisible by remember { mutableStateOf(false) }
     var spotlightVisible by remember { mutableStateOf(false) }
+    var controlVisible by remember { mutableStateOf(false) }
 
     var dragKey by remember { mutableStateOf<String?>(null) }
     var dragPos by remember { mutableStateOf(Offset.Zero) }
@@ -115,13 +117,18 @@ fun LauncherScreen(
             editMode = false
             folderVisible = false
             spotlightVisible = false
+            controlVisible = false
             pagerState.animateScrollToPage(0)
         }
     }
 
+    // Launcher tidak boleh tertutup oleh tombol Back; handler ini didaftarkan paling awal
+    // sehingga handler lain di bawahnya (edit/folder/spotlight) tetap diprioritaskan.
+    BackHandler(enabled = true) { }
     BackHandler(enabled = editMode) { editMode = false }
     BackHandler(enabled = folderVisible) { folderVisible = false }
     BackHandler(enabled = spotlightVisible) { spotlightVisible = false }
+    BackHandler(enabled = controlVisible) { controlVisible = false }
 
     val launch: (AppInfo, Rect?) -> Unit = { app, r -> onLaunch(app, r?.toAndroidRect()) }
 
@@ -153,7 +160,7 @@ fun LauncherScreen(
         }
     }
 
-    val overlayOpen = folderVisible || spotlightVisible
+    val overlayOpen = folderVisible || spotlightVisible || controlVisible
     val blurRadius by animateDpAsState(if (overlayOpen) 18.dp else 0.dp, label = "blur")
 
     Box(Modifier.fillMaxSize()) {
@@ -163,17 +170,35 @@ fun LauncherScreen(
                 .systemBarsPadding()
                 .then(if (blurRadius > 0.dp) Modifier.blur(blurRadius) else Modifier),
         ) {
-            // Baris atas: tombol "Selesai" saat edit
-            Box(
-                Modifier.fillMaxWidth().height(40.dp).padding(end = 20.dp),
-                contentAlignment = Alignment.CenterEnd,
-            ) {
-                if (editMode) {
-                    BasicText(
-                        "Selesai",
-                        modifier = Modifier.clickable { editMode = false },
-                        style = TextStyle(color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
-                    )
+            // Baris atas: tombol "Selesai" saat edit. Geser ke bawah di sisi kanan -> Control Center
+            Box(Modifier.fillMaxWidth().height(48.dp)) {
+                Box(
+                    Modifier
+                        .align(Alignment.CenterEnd)
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.5f)
+                        .pointerInput(editMode) {
+                            var total = 0f
+                            val threshold = 28.dp.toPx()
+                            detectVerticalDragGestures(
+                                onDragStart = { total = 0f },
+                                onDragEnd = {
+                                    if (total > threshold && !editMode && dragKey == null) controlVisible = true
+                                },
+                                onDragCancel = { },
+                                onVerticalDrag = { _, amount -> total += amount },
+                            )
+                        }
+                        .padding(end = 20.dp),
+                    contentAlignment = Alignment.CenterEnd,
+                ) {
+                    if (editMode) {
+                        BasicText(
+                            "Selesai",
+                            modifier = Modifier.clickable { editMode = false },
+                            style = TextStyle(color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+                        )
+                    }
                 }
             }
 
@@ -361,6 +386,11 @@ fun LauncherScreen(
             },
             onRename = { name -> openFolderId?.let { state.renameFolder(it, name) } },
             onEject = { app -> openFolderId?.let { state.removeFromFolder(it, app.key) } },
+        )
+
+        ControlCenterOverlay(
+            visible = controlVisible,
+            onClose = { controlVisible = false },
         )
 
         SpotlightOverlay(

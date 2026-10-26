@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -100,7 +101,7 @@ fun FolderIcon(apps: List<AppInfo>, modifier: Modifier = Modifier) {
                         Image(
                             bitmap = a.icon,
                             contentDescription = null,
-                            modifier = Modifier.size(14.dp).shadow(0.dp, SquircleShape),
+                            modifier = Modifier.size(14.dp).clip(SquircleShape),
                         )
                     }
                 }

@@ -9,7 +9,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 /**
  * Ikon custom. Urutan pencarian:
  * 1. File pribadi: res/drawable-nodpi/icon_<package_name>.png (titik jadi garis bawah)
- * 2. Pack bawaan (pack_1..pack_30.png) lewat package name atau nama aplikasi
+ * 2. Pack "Mac & iOS Custom icon pack" (ic_<nama>.png) lewat package name atau nama aplikasi, lihat [brands]
+ * 3. Pack glyph lama (pack_1..pack_30.png) lewat package name atau nama aplikasi
  * Kalau tidak ada yang cocok, dipakai ikon asli aplikasi.
  */
 object CustomIcons {
@@ -19,6 +20,145 @@ object CustomIcons {
     // 8 lonceng, 9 centang, 10 silang, 11 musik, 12 folder, 13 lokasi, 14 kontak, 15 sparkle,
     // 16 pengaturan, 17 galeri, 18 cari, 19 telepon, 20 komunitas, 21 berita, 22 youtube,
     // 23 instagram, 24 X, 25 tas kerja, 26 email, 27 sampah, 28 daur ulang, 29 statistik, 30 lampu
+    /** Satu ikon di pack iOS: nama resource (ic_<res>), package yang memakainya, dan nama aplikasi (huruf kecil, tanpa spasi). */
+    private class Brand(val res: String, val packages: List<String> = emptyList(), val labels: List<String> = emptyList())
+
+    private val brands = listOf(
+        Brand("1password", listOf("com.onepassword.android", "com.agilebits.onepassword"), listOf("1password")),
+        Brand("airmail", labels = listOf("airmail")),
+        Brand("beelinguapp", labels = listOf("beelinguapp")),
+        Brand("brawlstars", listOf("com.supercell.brawlstars"), listOf("brawlstars")),
+        Brand("calcbot", labels = listOf("calcbot")),
+        Brand(
+            "calculator",
+            listOf(
+                "com.google.android.calculator", "com.miui.calculator",
+                "com.android.calculator2", "com.sec.android.app.popupcalculator",
+            ),
+            listOf("calculator", "kalkulator"),
+        ),
+        Brand("craft", labels = listOf("craft")),
+        Brand("dayone", labels = listOf("dayone")),
+        Brand("dribbble", labels = listOf("dribbble")),
+        Brand("duolingo", listOf("com.duolingo"), listOf("duolingo")),
+        Brand("excel", listOf("com.microsoft.office.excel"), listOf("excel")),
+        Brand("figma", listOf("com.figma.mirror"), listOf("figma")),
+        Brand("findmy", listOf("com.google.android.apps.adm"), listOf("findhub", "finddevice", "findmydevice", "findmy")),
+        Brand(
+            "finder",
+            listOf(
+                "com.google.android.apps.nbu.files", "com.mi.android.globalFileexplorer",
+                "com.android.fileexplorer", "com.sec.android.app.myfiles",
+            ),
+            listOf("files", "filemanager", "fileexplorer", "pengelolafile"),
+        ),
+        Brand("fortnite", listOf("com.epicgames.fortnite"), listOf("fortnite")),
+        Brand("home", listOf("com.google.android.apps.chromecast.app"), listOf("googlehome")),
+        Brand("launchcenter", labels = listOf("launchcenter")),
+        Brand("maps", listOf("com.google.android.apps.maps"), listOf("maps", "peta")),
+        Brand("messenger", listOf("com.facebook.orca"), listOf("messenger")),
+        Brand("mimo", listOf("com.getmimo"), listOf("mimo")),
+        Brand("minecraft", listOf("com.mojang.minecraftpe"), listOf("minecraft")),
+        Brand(
+            "music",
+            listOf("com.miui.player", "com.sec.android.app.music"),
+            listOf("music", "musik", "mi musik"),
+        ),
+        Brand("netflix", listOf("com.netflix.mediaclient"), listOf("netflix")),
+        Brand("notability", labels = listOf("notability")),
+        Brand("onedrive", listOf("com.microsoft.skydrive"), listOf("onedrive")),
+        Brand("onenote", listOf("com.microsoft.office.onenote"), listOf("onenote")),
+        Brand("outlook", listOf("com.microsoft.office.outlook"), listOf("outlook")),
+        Brand(
+            "photos",
+            listOf(
+                "com.google.android.apps.photos", "com.miui.gallery",
+                "com.sec.android.gallery3d", "com.android.gallery3d",
+            ),
+            listOf("photos", "foto", "gallery", "galeri"),
+        ),
+        Brand("picstart", labels = listOf("picstart")),
+        Brand("podcasts", listOf("com.google.android.apps.podcasts"), listOf("podcasts")),
+        Brand("powerpoint", listOf("com.microsoft.office.powerpoint"), listOf("powerpoint")),
+        Brand("rainbowsix", labels = listOf("rainbowsixmobile", "rainbowsix")),
+        Brand("reddit", listOf("com.reddit.frontpage"), listOf("reddit")),
+        Brand("reminder", listOf("com.google.android.apps.tasks"), listOf("reminders", "pengingat", "tasks")),
+        Brand(
+            "safari",
+            listOf(
+                "com.android.chrome", "com.mi.globalbrowser",
+                "com.android.browser", "com.sec.android.app.sbrowser",
+            ),
+            listOf("chrome", "browser"),
+        ),
+        Brand("settings", listOf("com.android.settings"), listOf("settings", "pengaturan")),
+        Brand("sketch", labels = listOf("sketch")),
+        Brand("slack", listOf("com.Slack"), listOf("slack")),
+        Brand("spark", listOf("com.readdle.spark"), listOf("spark")),
+        Brand("spotify", listOf("com.spotify.music"), listOf("spotify")),
+        Brand("swift", labels = listOf("swift")),
+        Brand("teams", listOf("com.microsoft.teams"), listOf("teams")),
+        Brand("things", labels = listOf("things")),
+        Brand(
+            "tiktok",
+            listOf("com.zhiliaoapp.musically", "com.ss.android.ugc.trill"),
+            listOf("tiktok"),
+        ),
+        Brand("twitch", listOf("tv.twitch.android.app"), listOf("twitch")),
+        Brand("vectornator", labels = listOf("vectornator")),
+        Brand(
+            "voice",
+            listOf(
+                "com.google.android.apps.recorder", "com.android.soundrecorder",
+                "com.sec.android.app.voicenote", "com.miui.soundrecorder",
+            ),
+            listOf("voicememos", "recorder", "perekamsuara", "perekam"),
+        ),
+        Brand("word", listOf("com.microsoft.office.word"), listOf("word")),
+
+        // Ikon iOS 13 (dari file Sketch Apple App Icon iOS 13)
+        Brand(
+            "phone",
+            listOf("com.google.android.dialer", "com.android.dialer", "com.samsung.android.dialer"),
+            listOf("phone", "telepon", "dialer"),
+        ),
+        Brand(
+            "messages",
+            listOf("com.google.android.apps.messaging", "com.android.mms", "com.samsung.android.messaging"),
+            listOf("messages", "pesan", "messaging"),
+        ),
+        Brand(
+            "camera",
+            listOf("com.android.camera", "com.android.camera2", "com.google.android.GoogleCamera", "com.sec.android.app.camera"),
+            listOf("camera", "kamera"),
+        ),
+        Brand(
+            "clock",
+            listOf("com.google.android.deskclock", "com.android.deskclock", "com.sec.android.app.clockpackage"),
+            listOf("clock", "jam"),
+        ),
+        Brand(
+            "notes",
+            listOf("com.miui.notes", "com.google.android.keep", "com.samsung.android.app.notes"),
+            listOf("notes", "catatan", "keep"),
+        ),
+        Brand("weather", listOf("com.miui.weather2"), listOf("weather", "cuaca")),
+        Brand("mail", listOf("com.google.android.gm"), listOf("gmail", "mail", "email")),
+        Brand("wallet", listOf("com.google.android.apps.walletnfcrel"), listOf("wallet", "dompet")),
+        Brand("tips", labels = listOf("tips")),
+        Brand("appstore", listOf("com.android.vending"), listOf("playstore", "googleplay")),
+        Brand("numbers", listOf("com.google.android.apps.docs.editors.sheets"), listOf("sheets")),
+        Brand("pages", listOf("com.google.android.apps.docs.editors.docs"), listOf("docs")),
+        Brand("keynote", listOf("com.google.android.apps.docs.editors.slides"), listOf("slides")),
+        Brand("health", listOf("com.google.android.apps.fitness"), listOf("fit", "health")),
+    )
+
+    private val brandByPackage: Map<String, String> =
+        brands.flatMap { b -> b.packages.map { it to b.res } }.toMap()
+
+    private val brandByLabel: Map<String, String> =
+        brands.flatMap { b -> b.labels.map { l -> l.filter { it.isLetterOrDigit() } to b.res } }.toMap()
+
     private val byLabel: Map<String, Int> = mapOf(
         "phone" to 19, "telepon" to 19, "dialer" to 19,
         "contacts" to 14, "kontak" to 14,
@@ -59,8 +199,17 @@ object CustomIcons {
         val ownId = drawableId(ctx, own)
         if (ownId != 0) return render(ctx, ownId)
 
+        val norm = label.lowercase().filter { it.isLetterOrDigit() }
+
+        // Pack iOS didahulukan dari pack glyph lama
+        val brand = brandByPackage[packageName] ?: brandByLabel[norm]
+        if (brand != null) {
+            val brandId = drawableId(ctx, "ic_$brand")
+            if (brandId != 0) return render(ctx, brandId)
+        }
+
         val n = byPackage[packageName]
-            ?: byLabel[label.lowercase().filter { it.isLetterOrDigit() }]
+            ?: byLabel[norm]
             ?: return null
         val id = drawableId(ctx, "pack_$n")
         return if (id != 0) render(ctx, id) else null

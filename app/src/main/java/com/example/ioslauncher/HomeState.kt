@@ -43,7 +43,8 @@ class HomeState(private val ctx: Context) {
         dock = data.dock
         apps = data.grid.associateBy { it.key }
         all = (data.grid + data.dock).sortedBy { it.label.lowercase() }
-        commit(reconcile(entries, data.grid.map { it.key }))
+        val reconciled = reconcile(entries, data.grid.map { it.key })
+        if (reconciled != entries) commit(reconciled)
     }
 
     fun items(): List<HomeItem> = entries.mapNotNull { e ->
